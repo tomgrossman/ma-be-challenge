@@ -3,7 +3,13 @@ const turbo = require('turbo-http')
 const port = +process.argv[2] || 3000
 
 const cardsData = fs.readFileSync('./cards.json');
-const cards = JSON.parse(cardsData);
+const cards = JSON.parse(cardsData).map(card => {
+    const str = `{ "id": "${card.id}", "name": "${card.name}"}`;
+    return {
+        card: str,
+        length: str.length
+    };
+});
 const cardsLength = cards.length;
 
 async function handleRequests (req, res) {
@@ -19,10 +25,8 @@ async function handleRequests (req, res) {
     }
 
     const card = cards[userCardCount-1];
-
-    const response = `{ "id": "${card.id}", "name": "${card.name}"}`;
-    res.setHeader('Content-Length', response.length)
-    return res.write(response);
+    res.setHeader('Content-Length', card.length)
+    return res.write(card.card);
 }
 
 const client = require('redis').createClient()
