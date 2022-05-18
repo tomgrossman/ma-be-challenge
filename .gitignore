@@ -1,0 +1,8 @@
+.idea
+node_modules
+cards.json
+linux
+osx-*
+tester
+tester_src
+README.md
