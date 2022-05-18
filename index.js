@@ -14,15 +14,16 @@ const finalCard = { card: '{ "id": "ALL CARDS" }', length: 21};
 const readyCard = { card: '{ "ready": "true" }', length: 19 };
 
 async function handleRequests (req, res) {
-    if ('/ready' === req.url) {
-        res.setHeader('Content-Length', readyCard.length)
-        return res.write(readyCard.card)
+    switch (req.url) {
+        case '/ready':
+            res.setHeader('Content-Length', readyCard.length)
+            return res.write(readyCard.card)
+        default:
+            const userCardCount = await client.incr(req.url);
+            const card = cards[userCardCount-1] || finalCard;
+            res.setHeader('Content-Length', card.length)
+            return res.write(card.card);
     }
-
-    const userCardCount = await client.incr(req.url);
-    const card = cards[userCardCount-1] || finalCard;
-    res.setHeader('Content-Length', card.length)
-    return res.write(card.card);
 }
 
 const client = require('redis').createClient()
