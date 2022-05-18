@@ -10,21 +10,17 @@ const cards = JSON.parse(cardsData).map(card => {
         length: str.length
     };
 });
-const cardsLength = cards.length;
+const finalCard = { card: '{ "id": "ALL CARDS" }', length: 21};
+const readyCard = { card: '{ "ready": "true" }', length: 19 };
 
 async function handleRequests (req, res) {
     if ('/ready' === req.url) {
-        res.setHeader('Content-Length', 19)
-        return res.write('{ "ready": "true" }')
+        res.setHeader('Content-Length', readyCard.length)
+        return res.write(readyCard.card)
     }
 
     const userCardCount = await client.incr(req.url);
-    if (cardsLength < userCardCount) {
-        res.setHeader('Content-Length', 21)
-        return res.write('{ "id": "ALL CARDS" }');
-    }
-
-    const card = cards[userCardCount-1];
+    const card = cards[userCardCount-1] || finalCard;
     res.setHeader('Content-Length', card.length)
     return res.write(card.card);
 }
