@@ -14,16 +14,16 @@ const finalCard = { card: '{ "id": "ALL CARDS" }', length: 21};
 const readyCard = { card: '{ "ready": "true" }', length: 19 };
 
 async function handleRequests (req, res) {
-    switch (req.url) {
-        case '/ready':
-            res.setHeader('Content-Length', readyCard.length);
-            res.write(readyCard.card);
-            break;
-        default:
+    switch (req.url.charAt(1)) {
+        case 'c': // /card_add
             const userCardCount = await client.incr(req.url.substring(13));
             const card = cards[userCardCount-1] || finalCard;
             res.setHeader('Content-Length', card.length);
             res.write(card.card);
+            break;
+        default: // /ready
+            res.setHeader('Content-Length', readyCard.length);
+            res.write(readyCard.card);
     }
 }
 
