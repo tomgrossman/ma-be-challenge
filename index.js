@@ -17,7 +17,7 @@ async function handleRequests (req, res) {
     switch (req.url[1]) { //slightly faster than charAt(1)
         case 'c': // /card_add
             const userCardCount = await client.incr(req.url.substring(13));
-            const card = cards[userCardCount-1] || finalCard;
+            const card = cards[userCardCount-1] ?? finalCard;
             res.setHeader('Content-Length', card.length);
             res.write(card.card);
             break;
