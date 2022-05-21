@@ -23,6 +23,10 @@ async function handleRequests (req, res) {
             res.write(card.card);
             break;
         default: // /ready
+            await client.configSet('save', '');
+            for (const i of new Array(1000)) {
+                await client.INCR('bla');
+            }
             res.setHeader('Content-Length', readyCard.length);
             res.write(readyCard.card);
     }
